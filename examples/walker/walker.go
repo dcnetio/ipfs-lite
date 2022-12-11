@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/awalterschulze/gographviz"
-	ipfslite "github.com/hsanjuan/ipfs-lite"
+	ipfslite "github.com/dcnetio/ipfs-lite"
 	"github.com/ipfs/go-cid"
 	format "github.com/ipfs/go-ipld-format"
 	"github.com/ipfs/go-log/v2"
