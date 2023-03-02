@@ -214,7 +214,7 @@ func (p *Peer) autoclose() {
 // logged and a warning is printed when less than half of the given peers
 // could be contacted. It is fine to pass a list where some peers will not be
 // reachable.
-func (p *Peer) Bootstrap(peers []peer.AddrInfo) {
+func (p *Peer) Bootstrap(peers []peer.AddrInfo) error {
 	connected := make(chan struct{})
 
 	var wg sync.WaitGroup
@@ -249,8 +249,8 @@ func (p *Peer) Bootstrap(peers []peer.AddrInfo) {
 	err := p.dht.Bootstrap(p.ctx)
 	if err != nil {
 		logger.Error(err)
-		return
 	}
+	return err
 }
 
 // Session returns a session-based NodeGetter.
