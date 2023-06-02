@@ -52,7 +52,8 @@ var Libp2pOptionsExtra = []libp2p.Option{
 			peerChan <- ipfspeers[i]
 		}
 		return peerChan
-	}, time.Minute)),
+	})),
+	//}, time.Minute)),
 	libp2p.EnableNATService(),
 }
 
