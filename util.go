@@ -16,7 +16,6 @@ import (
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/libp2p/go-libp2p/core/pnet"
 	"github.com/libp2p/go-libp2p/core/routing"
-	"github.com/libp2p/go-libp2p/p2p/host/autorelay"
 	"github.com/libp2p/go-libp2p/p2p/net/connmgr"
 	"github.com/libp2p/go-libp2p/p2p/transport/tcp"
 	"github.com/libp2p/go-libp2p/p2p/transport/websocket"
@@ -44,7 +43,7 @@ var connMgr, _ = connmgr.NewConnManager(100, 600, connmgr.WithGracePeriod(time.M
 var Libp2pOptionsExtra = []libp2p.Option{
 	libp2p.NATPortMap(),
 	libp2p.ConnectionManager(connMgr),
-	libp2p.EnableAutoRelay(autorelay.WithPeerSource(func(_ context.Context, num int) <-chan peer.AddrInfo {
+	libp2p.EnableAutoRelayWithPeerSource(func(_ context.Context, num int) <-chan peer.AddrInfo {
 		peerChan := make(chan peer.AddrInfo, num)
 		defer close(peerChan)
 		ipfspeers := DefaultBootstrapPeers()
@@ -52,7 +51,7 @@ var Libp2pOptionsExtra = []libp2p.Option{
 			peerChan <- ipfspeers[i]
 		}
 		return peerChan
-	})),
+	}),
 	//}, time.Minute)),
 	libp2p.EnableNATService(),
 }
