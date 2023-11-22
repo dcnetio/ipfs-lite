@@ -9,6 +9,7 @@ import (
 	"github.com/ipfs/go-cid"
 	format "github.com/ipfs/go-ipld-format"
 	"github.com/ipfs/go-log/v2"
+	dht "github.com/libp2p/go-libp2p-kad-dht"
 	"github.com/libp2p/go-libp2p/core/crypto"
 	"github.com/multiformats/go-multiaddr"
 )
@@ -37,6 +38,7 @@ func main() {
 		nil,
 		[]multiaddr.Multiaddr{listen},
 		ds,
+		dht.ModeAuto,
 		ipfslite.Libp2pOptionsExtra...,
 	)
 

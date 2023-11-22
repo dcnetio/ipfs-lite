@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	cbor "github.com/ipfs/go-ipld-cbor"
+	dht "github.com/libp2p/go-libp2p-kad-dht"
 	"github.com/libp2p/go-libp2p/core/crypto"
 	"github.com/libp2p/go-libp2p/core/peer"
 	multiaddr "github.com/multiformats/go-multiaddr"
@@ -42,6 +43,7 @@ func setupPeers(t *testing.T) (p1, p2 *Peer, closer func(t *testing.T)) {
 		psk,
 		[]multiaddr.Multiaddr{listen},
 		nil,
+		dht.ModeAuto,
 		Libp2pOptionsExtra...,
 	)
 	if err != nil {
@@ -59,6 +61,7 @@ func setupPeers(t *testing.T) (p1, p2 *Peer, closer func(t *testing.T)) {
 		psk,
 		[]multiaddr.Multiaddr{listen},
 		nil,
+		dht.ModeAuto,
 		Libp2pOptionsExtra...,
 	)
 	if err != nil {

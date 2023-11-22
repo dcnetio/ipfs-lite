@@ -10,6 +10,7 @@ import (
 
 	ipfslite "github.com/dcnetio/ipfs-lite"
 	"github.com/ipfs/go-cid"
+	dht "github.com/libp2p/go-libp2p-kad-dht"
 	"github.com/libp2p/go-libp2p/core/crypto"
 	"github.com/multiformats/go-multiaddr"
 )
@@ -32,6 +33,7 @@ func main() {
 		nil,
 		[]multiaddr.Multiaddr{listen},
 		ds,
+		dht.ModeAuto,
 		ipfslite.Libp2pOptionsExtra...,
 	)
 
