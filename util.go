@@ -76,6 +76,7 @@ func SetupLibp2p(
 	listenAddrs []multiaddr.Multiaddr,
 	ds datastore.Batching,
 	dhtMode dht.ModeOpt,
+	providerEnableFlag bool,
 	opts ...libp2p.Option,
 ) (host.Host, *dualdht.DHT, error) {
 
@@ -97,7 +98,7 @@ func SetupLibp2p(
 		libp2p.PrivateNetwork(secret),
 		transports,
 		libp2p.Routing(func(h host.Host) (routing.PeerRouting, error) {
-			ddht, err = newDHT(ctx, h, ds, dhtMode)
+			ddht, err = newDHT(ctx, h, ds, dhtMode, providerEnableFlag)
 			return ddht, err
 		}),
 	}
@@ -113,12 +114,15 @@ func SetupLibp2p(
 	return h, ddht, nil
 }
 
-func newDHT(ctx context.Context, h host.Host, ds datastore.Batching, dhtMode dht.ModeOpt) (*dualdht.DHT, error) {
+func newDHT(ctx context.Context, h host.Host, ds datastore.Batching, dhtMode dht.ModeOpt, providerEnableFlag bool) (*dualdht.DHT, error) {
 	dhtOpts := []dualdht.Option{
 		dualdht.DHTOption(dht.NamespacedValidator("pk", record.PublicKeyValidator{})),
 		dualdht.DHTOption(dht.NamespacedValidator("ipns", ipns.Validator{KeyBook: h.Peerstore()})),
 		dualdht.DHTOption(dht.Concurrency(10)),
 		dualdht.DHTOption(dht.Mode(dhtMode)),
+	}
+	if !providerEnableFlag {
+		dhtOpts = append(dhtOpts, dualdht.DHTOption(dht.DisableProviders()))
 	}
 	if ds != nil {
 		dhtOpts = append(dhtOpts, dualdht.DHTOption(dht.Datastore(ds)))
