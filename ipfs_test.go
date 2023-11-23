@@ -44,7 +44,6 @@ func setupPeers(t *testing.T) (p1, p2 *Peer, closer func(t *testing.T)) {
 		[]multiaddr.Multiaddr{listen},
 		nil,
 		dht.ModeAuto,
-		true,
 		Libp2pOptionsExtra...,
 	)
 	if err != nil {
@@ -63,7 +62,6 @@ func setupPeers(t *testing.T) (p1, p2 *Peer, closer func(t *testing.T)) {
 		[]multiaddr.Multiaddr{listen},
 		nil,
 		dht.ModeAuto,
-		true,
 		Libp2pOptionsExtra...,
 	)
 	if err != nil {

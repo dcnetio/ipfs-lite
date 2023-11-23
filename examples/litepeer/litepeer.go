@@ -34,7 +34,6 @@ func main() {
 		[]multiaddr.Multiaddr{listen},
 		ds,
 		dht.ModeAuto,
-		true,
 		ipfslite.Libp2pOptionsExtra...,
 	)
 
