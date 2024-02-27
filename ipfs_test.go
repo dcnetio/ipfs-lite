@@ -192,6 +192,7 @@ func TestFiles(t *testing.T) {
 	content2, err := io.ReadAll(rsc)
 	if err != nil {
 		t.Fatal(err)
+
 	}
 
 	if !bytes.Equal(content, content2) {
