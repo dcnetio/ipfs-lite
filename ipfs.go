@@ -256,8 +256,7 @@ type AddParams struct {
 }
 
 // AddFile chunks and adds content to the DAGService from a reader. The content
-// is stored as a UnixFS DAG (default for IPFS). It returns the root
-// ipld.Node.
+// is stored as a UnixFS DAG (default for IPFS). It returns the root ipld.Node.
 func (p *Peer) AddFile(ctx context.Context, r io.Reader, params *AddParams) (ipld.Node, error) {
 	if params == nil {
 		params = &AddParams{}
