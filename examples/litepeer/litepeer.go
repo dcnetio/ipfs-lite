@@ -45,9 +45,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
 	lite.Bootstrap(ipfslite.DefaultBootstrapPeers())
-
 	c, _ := cid.Decode("QmWATWQ7fVPP2EFGu71UkfnqhYXDYH566qy47CnJDgvs8u")
 	rsc, err := lite.GetFile(ctx, c)
 	if err != nil {

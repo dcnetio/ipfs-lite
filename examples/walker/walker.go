@@ -67,7 +67,6 @@ func main() {
 		panic(err)
 	}
 	navNode := format.NewNavigableIPLDNode(node, lite.DAGService)
-
 	rootNode := node.Cid().String()
 
 	// add the root node to the graph
