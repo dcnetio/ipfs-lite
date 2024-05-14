@@ -303,6 +303,8 @@ func (p *Peer) AddFile(ctx context.Context, r io.Reader, params *AddParams) (ipl
 	default:
 		return nil, errors.New("invalid Layout")
 	}
+	//The whole network broadcasts the success of storing the cid.
+	p.dht.Provide(ctx, n.Cid(), true)
 	return n, err
 }
 
