@@ -27,6 +27,7 @@ import (
 	provider "github.com/ipfs/boxo/provider"
 	"github.com/ipfs/go-cid"
 	"github.com/ipfs/go-datastore"
+	delay "github.com/ipfs/go-ipfs-delay"
 	ipld "github.com/ipfs/go-ipld-format"
 	logging "github.com/ipfs/go-log/v2"
 	"github.com/libp2p/go-libp2p/core/host"
@@ -154,8 +155,17 @@ func (p *Peer) setupBlockService() error {
 		return nil
 	}
 
+	opts := []bitswap.Option{
+		// 禁用初始消息交换
+		bitswap.SetSimulateDontHavesOnTimeout(false),
+		// 增加重广播延迟（实际上可以设置为非常长的时间）
+		bitswap.RebroadcastDelay(delay.Fixed(24 * time.Hour)),
+		bitswap.SetSendDontHaves(false),
+		bitswap.TaskWorkerCount(20),
+		bitswap.WithPeerBlockRequestFilter(nil),
+	}
 	bswapnet := bsnet.NewFromIpfsHost(p.host)
-	bswap := bitswap.New(p.ctx, bswapnet, p.dht, p.bstore)
+	bswap := bitswap.New(p.ctx, bswapnet, p.dht, p.bstore, opts...)
 	provider, _ := provider.New(p.store, provider.Online(p.dht))
 	exch := providing.New(bswap, provider)
 	bserv := blockservice.New(p.bstore, exch)
