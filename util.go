@@ -2,6 +2,7 @@ package ipfslite
 
 import (
 	"context"
+	"io"
 	"time"
 
 	ipns "github.com/ipfs/boxo/ipns"
@@ -112,6 +113,7 @@ func SetupLibp2p(
 	yamuxConfig.EnableKeepAlive = true                // 开启保活
 	yamuxConfig.KeepAliveInterval = 15 * time.Second  // 保活间隔
 	yamuxConfig.MaxMessageSize = 16 * 1024 * 1024     // 最大消息大小
+	yamuxConfig.LogOutput = io.Discard                // 日志输出
 	yamuxTransport := libp2pYamux.Transport(*yamuxConfig)
 
 	finalOpts = append(finalOpts, libp2p.Muxer("/yamux/1.0.0", &yamuxTransport))
