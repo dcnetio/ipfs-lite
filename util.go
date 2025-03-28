@@ -16,9 +16,11 @@ import (
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/libp2p/go-libp2p/core/pnet"
 	"github.com/libp2p/go-libp2p/core/routing"
+	libp2pYamux "github.com/libp2p/go-libp2p/p2p/muxer/yamux"
 	"github.com/libp2p/go-libp2p/p2p/net/connmgr"
 	"github.com/libp2p/go-libp2p/p2p/transport/tcp"
 	"github.com/libp2p/go-libp2p/p2p/transport/websocket"
+	yamuxv5 "github.com/libp2p/go-yamux/v5"
 	"github.com/multiformats/go-multiaddr"
 )
 
@@ -103,6 +105,16 @@ func SetupLibp2p(
 	}
 	finalOpts = append(finalOpts, opts...)
 
+	// 关键参数调整
+	yamuxConfig := yamuxv5.DefaultConfig()
+	yamuxConfig.MaxStreamWindowSize = 1024 * 1024 * 4 // 单个流窗口 4MB
+	yamuxConfig.AcceptBacklog = 128                   // 流接收队列长度
+	yamuxConfig.EnableKeepAlive = true                // 开启保活
+	yamuxConfig.KeepAliveInterval = 15 * time.Second  // 保活间隔
+	yamuxConfig.MaxMessageSize = 16 * 1024 * 1024     // 最大消息大小
+	yamuxTransport := libp2pYamux.Transport(*yamuxConfig)
+
+	finalOpts = append(finalOpts, libp2p.Muxer("/yamux/1.0.0", &yamuxTransport))
 	h, err := libp2p.New(
 		finalOpts...,
 	)
