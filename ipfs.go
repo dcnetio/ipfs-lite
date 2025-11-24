@@ -38,6 +38,10 @@ import (
 
 var logger = logging.Logger("ipfslite")
 
+func init() {
+	logging.SetLogLevel("provider", "FATAL")
+}
+
 var (
 	defaultReprovideInterval = 12 * time.Hour
 )
