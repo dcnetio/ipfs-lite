@@ -18,7 +18,6 @@ import (
 	chunker "github.com/ipfs/boxo/chunker"
 	exchange "github.com/ipfs/boxo/exchange"
 	offline "github.com/ipfs/boxo/exchange/offline"
-	"github.com/ipfs/boxo/exchange/providing"
 	"github.com/ipfs/boxo/ipld/merkledag"
 	"github.com/ipfs/boxo/ipld/unixfs/importer/balanced"
 	"github.com/ipfs/boxo/ipld/unixfs/importer/helpers"
@@ -27,7 +26,6 @@ import (
 	provider "github.com/ipfs/boxo/provider"
 	"github.com/ipfs/go-cid"
 	"github.com/ipfs/go-datastore"
-	delay "github.com/ipfs/go-ipfs-delay"
 	ipld "github.com/ipfs/go-ipld-format"
 	logging "github.com/ipfs/go-log/v2"
 	"github.com/libp2p/go-libp2p/core/host"
@@ -163,15 +161,15 @@ func (p *Peer) setupBlockService() error {
 		// 禁用初始消息交换
 		bitswap.SetSimulateDontHavesOnTimeout(false),
 		// 增加重广播延迟（实际上可以设置为非常长的时间）
-		bitswap.RebroadcastDelay(delay.Fixed(24 * time.Hour)),
+		bitswap.RebroadcastDelay(24 * time.Hour),
 		bitswap.SetSendDontHaves(false),
 		bitswap.TaskWorkerCount(20),
 		bitswap.WithPeerBlockRequestFilter(nil),
 	}
 	bswapnet := bsnet.NewFromIpfsHost(p.host)
 	bswap := bitswap.New(p.ctx, bswapnet, p.dht, p.bstore, opts...)
-	provider, _ := provider.New(p.store, provider.Online(p.dht))
-	exch := providing.New(bswap, provider)
+	providerSys, _ := provider.New(p.store, provider.Online(p.dht))
+	exch := newProvidingExchange(bswap, providerSys)
 	bserv := blockservice.New(p.bstore, exch)
 	p.bserv = bserv
 	p.exch = exch
@@ -193,7 +191,7 @@ func (p *Peer) setupReprovider() error {
 		provider.DatastorePrefix(datastore.NewKey("repro")),
 		provider.Online(p.dht),
 		provider.ReproviderInterval(p.cfg.ReprovideInterval),
-		provider.KeyProvider(provider.NewBlockstoreProvider(p.bstore)))
+		provider.KeyProvider(newBlockstoreProvider(p.bstore)))
 	if err != nil {
 		return err
 	}
